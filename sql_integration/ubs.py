@@ -9,15 +9,17 @@ cur = con.cursor()  # criando cursor para operar funcionalidades do sql
 
 cur.execute("CREATE TABLE IF NOT EXISTS UBS (nome TEXT, sigla TEXT)")
 
-cur.execute("CREATE TABLE IF NOT EXISTS Servidor (nome TEXT, sigla TEXT)")
+cur.execute("CREATE TABLE IF NOT EXISTS Servidor (nome TEXT, matricula TEXT, ubs TEXT)")
 
 cur.execute("CREATE TABLE IF NOT EXISTS Vacinas (nome TEXT, fabricante TEXT, doenca TEXT)")
 
 cur.execute("CREATE TABLE IF NOT EXISTS Lotes_vacinas (vacina TEXT, ubs TEXT, quantidade INTEGER, custo FLOAT, fonte TEXT)")
 
-cur.execute("CREATE TABLE IF NOT EXISTS Agendamentos_vacinacao (ubs TEXT, vacina TEXT, nome TEXT, cpf INTEGER NOT NULL PRIMARY KEY)")
+cur.execute("CREATE TABLE IF NOT EXISTS Agendamentos_vacinacao (ubs TEXT, vacina TEXT, nome TEXT, cpf INTEGER PRIMARY KEY)")
 
 cur.execute("CREATE TABLE IF NOT EXISTS Vacinacoes_efetuadas (cpf INTEGER NOT NULL PRIMARY KEY)")
+
+con.commit()
 
 '''cur.execute("DELETE * FROM UBS")
 cur.execute("DELETE * FROM Servidor")
@@ -50,9 +52,11 @@ class UBS():
     
     def cancelar_agendamento_vacinacao(self, cpf):
         cur.execute("DELETE FROM Agendamentos_vacinacao WHERE cpf=?", (cpf))
+        con.commit()
 
     def registrar_vacinacao_efetuada(self, cpf):
         cur.execute("INSERT INTO Vacinacoes_efetuadas values(?)", (cpf))
+        con.commit()
     
     def exibir_dados(self, op=0):
         if (op == 0):
@@ -76,7 +80,7 @@ class UBS():
             print(res.fetchall())
 
         if (op == 5):
-            res = cur.execute("SELECT * FROM Agendamentos")
+            res = cur.execute("SELECT * FROM Agendamentos_vacinacao")
             print(res.fetchall())
 
         if (op == 6):
