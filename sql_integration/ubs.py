@@ -1,3 +1,4 @@
+import pandas as pd
 import sqlite3
 
 
@@ -13,11 +14,11 @@ cur.execute("CREATE TABLE IF NOT EXISTS Servidor (nome TEXT, matricula TEXT, ubs
 
 cur.execute("CREATE TABLE IF NOT EXISTS Vacinas (nome TEXT, fabricante TEXT, doenca TEXT)")
 
-cur.execute("CREATE TABLE IF NOT EXISTS Lotes_vacinas (vacina TEXT, ubs TEXT, quantidade INTEGER, custo FLOAT, fonte TEXT)")
+cur.execute("CREATE TABLE IF NOT EXISTS Lotes_vacinas (vacina TEXT, ubs TEXT, quantidade INTEGER, custo REAL, fonte TEXT)")
 
-cur.execute("CREATE TABLE IF NOT EXISTS Agendamentos_vacinacao (ubs TEXT, vacina TEXT, nome TEXT, cpf INTEGER PRIMARY KEY)")
+cur.execute("CREATE TABLE IF NOT EXISTS Agendamentos_vacinacao (ubs TEXT, vacina TEXT, nome TEXT, cpf TEXT)")
 
-cur.execute("CREATE TABLE IF NOT EXISTS Vacinacoes_efetuadas (cpf INTEGER NOT NULL PRIMARY KEY)")
+cur.execute("CREATE TABLE IF NOT EXISTS Vacinacoes_efetuadas (cpf TEXT)")
 
 con.commit()
 
@@ -55,7 +56,7 @@ class UBS():
         con.commit()
 
     def registrar_vacinacao_efetuada(self, cpf):
-        cur.execute("INSERT INTO Vacinacoes_efetuadas values(?)", (cpf))
+        cur.execute("INSERT INTO Vacinacoes_efetuadas (cpf) values(?)", (cpf))
         con.commit()
     
     def exibir_dados(self, op=0):
@@ -64,8 +65,11 @@ class UBS():
             print(res.fetchall())
 
         if (op == 1):
-            res = cur.execute("SELECT * FROM UBS")
-            print(res.fetchall())
+            df = pd.read_sql_table("SELECT * FROM UBS", con)
+            print(df.head())
+
+            # res = cur.execute("SELECT * FROM UBS")
+            # print(res.fetchall())
 
         if (op == 2):
             res = cur.execute("SELECT * FROM Servidor")
